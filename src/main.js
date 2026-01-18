@@ -2,11 +2,13 @@ import './style.css';
 import { DrawingCanvas } from './canvas.js';
 import { loadModel, recognize } from './recognizer.js';
 import { readings } from './readings.js';
+import { getHistory, addToHistory, removeFromHistory } from './history.js';
 
 const statusEl = document.getElementById('status');
 const recognizeBtn = document.getElementById('recognize-btn');
 const clearBtn = document.getElementById('clear-btn');
 const resultsEl = document.getElementById('results');
+const historyEl = document.getElementById('history');
 const canvasEl = document.getElementById('drawing-canvas');
 const hintEl = document.getElementById('canvas-hint');
 
@@ -31,6 +33,17 @@ function getReadingText(character) {
   return parts.join(' / ');
 }
 
+function handleSave(character) {
+  const readingText = getReadingText(character);
+  addToHistory(character, readingText);
+  renderHistory();
+}
+
+function handleDelete(character) {
+  removeFromHistory(character);
+  renderHistory();
+}
+
 function renderResults(results) {
   if (!results || results.length === 0) {
     resultsEl.innerHTML = '<div class="no-results">漢字を書いてください</div>';
@@ -51,9 +64,43 @@ function renderResults(results) {
             <span class="result-percentage">${r.percentage}%</span>
           </div>
         </div>
+        <button class="save-btn" data-character="${r.character}">保存</button>
       </div>
     `;
   }).join('');
+
+  // Add event listeners to save buttons
+  resultsEl.querySelectorAll('.save-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      handleSave(btn.dataset.character);
+      btn.textContent = '保存済';
+      btn.disabled = true;
+    });
+  });
+}
+
+function renderHistory() {
+  const history = getHistory();
+
+  if (history.length === 0) {
+    historyEl.innerHTML = '<div class="no-results">保存した漢字はありません</div>';
+    return;
+  }
+
+  historyEl.innerHTML = history.map(item => `
+    <div class="history-item">
+      <span class="history-character">${item.character}</span>
+      <span class="history-reading">${item.readings}</span>
+      <button class="delete-btn" data-character="${item.character}">削除</button>
+    </div>
+  `).join('');
+
+  // Add event listeners to delete buttons
+  historyEl.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      handleDelete(btn.dataset.character);
+    });
+  });
 }
 
 function hideHint() {
@@ -104,6 +151,7 @@ async function init() {
   clearBtn.addEventListener('click', handleClear);
 
   renderResults(null);
+  renderHistory();
 
   try {
     await loadModel();
