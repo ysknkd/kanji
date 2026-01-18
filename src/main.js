@@ -162,7 +162,8 @@ async function handleLogin() {
 
   try {
     await auth.signIn();
-    // Auth state change will trigger UI update
+    // Re-render history after migration completes
+    await renderHistory();
   } catch (error) {
     console.error('Login failed:', error);
     setStatus('ログインに失敗しました', 'error');
