@@ -15,45 +15,29 @@ download_ichisadashioko() {
   echo "ichisadashioko model downloaded successfully."
 }
 
-# DaKanji model
-# https://github.com/CaptainDario/DaKanji-Single-Kanji-Recognition
+# DaKanji model (pre-converted TensorFlow.js)
+# Original: https://github.com/CaptainDario/DaKanji-Single-Kanji-Recognition (MIT License)
+# Credit: Character recognition powered by machine learning from CaptainDario (DaAppLab)
 DAKANJI_DIR="public/model/dakanji"
-DAKANJI_RELEASE_URL="https://github.com/CaptainDario/DaKanji-Single-Kanji-Recognition/releases/download/v1.2/v1.2.zip"
-DAKANJI_TMP_DIR="/tmp/dakanji-convert"
+DAKANJI_TFJS_URL="https://github.com/ysknkd/kanji/releases/download/models-v1.0/dakanji-tfjs-v1.2.zip"
 
 download_dakanji() {
-  echo "Downloading and converting DaKanji model..."
-
-  # Check if tensorflowjs_converter is available
-  if ! command -v tensorflowjs_converter &> /dev/null; then
-    echo "Error: tensorflowjs_converter not found."
-    echo "Please install it first: pip install tensorflowjs"
-    exit 1
-  fi
+  echo "Downloading DaKanji model..."
 
   mkdir -p "$DAKANJI_DIR"
-  mkdir -p "$DAKANJI_TMP_DIR"
 
-  # Download the release
-  echo "Downloading DaKanji v1.2..."
-  curl -sL "$DAKANJI_RELEASE_URL" -o "$DAKANJI_TMP_DIR/v1.2.zip"
+  # Download pre-converted TensorFlow.js model
+  echo "Downloading DaKanji TensorFlow.js model..."
+  curl -sL "$DAKANJI_TFJS_URL" -o "/tmp/dakanji-tfjs.zip"
 
   # Extract
   echo "Extracting..."
-  unzip -q -o "$DAKANJI_TMP_DIR/v1.2.zip" -d "$DAKANJI_TMP_DIR"
-
-  # Convert to TensorFlow.js format
-  echo "Converting to TensorFlow.js format..."
-  tensorflowjs_converter \
-    --input_format=tf_saved_model \
-    --output_format=tfjs_graph_model \
-    "$DAKANJI_TMP_DIR/v1.2/tf" \
-    "$DAKANJI_DIR"
+  unzip -q -o "/tmp/dakanji-tfjs.zip" -d "$DAKANJI_DIR"
 
   # Cleanup
-  rm -rf "$DAKANJI_TMP_DIR"
+  rm -f "/tmp/dakanji-tfjs.zip"
 
-  echo "DaKanji model downloaded and converted successfully."
+  echo "DaKanji model downloaded successfully."
 }
 
 # Download models based on argument or download all by default
