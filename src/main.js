@@ -1,6 +1,7 @@
 import './style.css';
 import { DrawingCanvas } from './canvas.js';
 import { loadModel, recognize } from './recognizer.js';
+import { readings } from './readings.js';
 
 const statusEl = document.getElementById('status');
 const recognizeBtn = document.getElementById('recognize-btn');
@@ -16,23 +17,43 @@ function setStatus(message, type = '') {
   statusEl.className = type;
 }
 
+function getReadingText(character) {
+  const r = readings[character];
+  if (!r) return '';
+
+  const parts = [];
+  if (r.on && r.on.length > 0) {
+    parts.push(r.on.join('・'));
+  }
+  if (r.kun && r.kun.length > 0) {
+    parts.push(r.kun.join('・'));
+  }
+  return parts.join(' / ');
+}
+
 function renderResults(results) {
   if (!results || results.length === 0) {
     resultsEl.innerHTML = '<div class="no-results">漢字を書いてください</div>';
     return;
   }
 
-  resultsEl.innerHTML = results.map(r => `
-    <div class="result-item">
-      <span class="result-character">${r.character}</span>
-      <div class="result-bar-container">
-        <div class="result-bar">
-          <div class="result-bar-fill" style="width: ${r.percentage}%"></div>
+  resultsEl.innerHTML = results.map(r => {
+    const readingText = getReadingText(r.character);
+    return `
+      <div class="result-item">
+        <span class="result-character">${r.character}</span>
+        <div class="result-info">
+          <div class="result-reading">${readingText}</div>
+          <div class="result-bar-container">
+            <div class="result-bar">
+              <div class="result-bar-fill" style="width: ${r.percentage}%"></div>
+            </div>
+            <span class="result-percentage">${r.percentage}%</span>
+          </div>
         </div>
-        <span class="result-percentage">${r.percentage}%</span>
       </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 function hideHint() {

@@ -1,6 +1,9 @@
 # Model files (downloaded during build)
 public/model/
 
+# KANJIDIC2 data (downloaded during build)
+data/
+
 # Logs
 logs
 *.log
