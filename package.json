@@ -15,6 +15,7 @@
     "vite": "^7.2.4"
   },
   "dependencies": {
-    "@tensorflow/tfjs": "^4.22.0"
+    "@tensorflow/tfjs": "^4.22.0",
+    "firebase": "^12.8.0"
   }
 }
