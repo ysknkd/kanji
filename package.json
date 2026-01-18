@@ -1,0 +1,19 @@
+{
+  "name": "kanji",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "download-model": "bash scripts/download-model.sh",
+    "prebuild": "npm run download-model",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^7.2.4"
+  },
+  "dependencies": {
+    "@tensorflow/tfjs": "^4.22.0"
+  }
+}

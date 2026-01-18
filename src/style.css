@@ -1,0 +1,298 @@
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #213547;
+  background-color: #f5f5f5;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  touch-action: manipulation;
+}
+
+body.scroll-locked {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+#app {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin: 0;
+  color: #1a1a1a;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#canvas-container {
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+#drawing-canvas {
+  background-color: #ffffff;
+  border: 2px solid #333;
+  border-radius: 8px;
+  cursor: crosshair;
+  touch-action: none;
+  max-width: 100%;
+  height: auto;
+}
+
+#drawing-canvas.active {
+  border-color: #4a90d9;
+  box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.3);
+}
+
+#canvas-hint {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 280px;
+  max-width: 100%;
+  height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  border-radius: 8px;
+}
+
+#canvas-hint span {
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+#canvas-hint.hidden {
+  display: none;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+#button-container {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+button {
+  flex: 1;
+  max-width: 140px;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+#recognize-btn {
+  background-color: #4a90d9;
+  color: white;
+}
+
+#recognize-btn:hover:not(:disabled) {
+  background-color: #3a7bc8;
+}
+
+#recognize-btn:disabled {
+  background-color: #a0c4e8;
+  cursor: not-allowed;
+}
+
+#clear-btn {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+#clear-btn:hover {
+  background-color: #d0d0d0;
+}
+
+#status {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #666;
+  min-height: 1.4em;
+}
+
+#status.error {
+  color: #d32f2f;
+}
+
+#status.success {
+  color: #388e3c;
+}
+
+#results-container {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#results-container h2 {
+  font-size: 1rem;
+  margin: 0 0 12px 0;
+  color: #333;
+}
+
+#results {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.result-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+}
+
+.result-character {
+  font-size: 2rem;
+  font-weight: 500;
+  min-width: 50px;
+  text-align: center;
+}
+
+.result-bar-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.result-bar {
+  flex: 1;
+  height: 8px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.result-bar-fill {
+  height: 100%;
+  background-color: #4a90d9;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.result-percentage {
+  font-size: 0.85rem;
+  color: #666;
+  min-width: 45px;
+  text-align: right;
+}
+
+.no-results {
+  text-align: center;
+  color: #999;
+  padding: 20px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: #f0f0f0;
+    background-color: #1a1a1a;
+  }
+
+  h1 {
+    color: #f0f0f0;
+  }
+
+  #drawing-canvas {
+    border-color: #555;
+  }
+
+  #recognize-btn {
+    background-color: #5a9fe9;
+  }
+
+  #recognize-btn:hover:not(:disabled) {
+    background-color: #4a8fd9;
+  }
+
+  #recognize-btn:disabled {
+    background-color: #3a5f7f;
+  }
+
+  #clear-btn {
+    background-color: #404040;
+    color: #e0e0e0;
+  }
+
+  #clear-btn:hover {
+    background-color: #505050;
+  }
+
+  #status {
+    color: #aaa;
+  }
+
+  #results-container {
+    background-color: #2a2a2a;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  #results-container h2 {
+    color: #e0e0e0;
+  }
+
+  .result-item {
+    background-color: #333;
+  }
+
+  .result-bar {
+    background-color: #444;
+  }
+
+  .result-percentage {
+    color: #aaa;
+  }
+
+  .no-results {
+    color: #777;
+  }
+}
