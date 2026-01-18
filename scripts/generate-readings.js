@@ -13,16 +13,25 @@ const KANJIDIC_GZ = join(ROOT_DIR, 'data/kanjidic2.xml.gz');
 const KANJIDIC_XML = join(ROOT_DIR, 'data/kanjidic2.xml');
 const OUTPUT_FILE = join(ROOT_DIR, 'src/readings.js');
 
-// Import supported kanji from labels.js
-const labelsPath = join(ROOT_DIR, 'src/labels.js');
-const labelsContent = readFileSync(labelsPath, 'utf-8');
-const kanjiDictMatch = labelsContent.match(/export const kanjiDict = \{([^}]+)\}/s);
+// Import supported kanji from label files
+// Combine both ichisadashioko and dakanji labels to support all characters
+const labelFiles = [
+  join(ROOT_DIR, 'src/labels/ichisadashioko.js'),
+  join(ROOT_DIR, 'src/labels/dakanji.js')
+];
+
 const supportedKanji = new Set();
 
-if (kanjiDictMatch) {
-  const entries = kanjiDictMatch[1].matchAll(/'([^']+)':\s*\d+/g);
-  for (const match of entries) {
-    supportedKanji.add(match[1]);
+for (const labelsPath of labelFiles) {
+  if (!existsSync(labelsPath)) continue;
+  const labelsContent = readFileSync(labelsPath, 'utf-8');
+  const kanjiDictMatch = labelsContent.match(/export const kanjiDict = \{([^}]+)\}/s);
+
+  if (kanjiDictMatch) {
+    const entries = kanjiDictMatch[1].matchAll(/'([^']+)':\s*\d+/g);
+    for (const match of entries) {
+      supportedKanji.add(match[1]);
+    }
   }
 }
 
