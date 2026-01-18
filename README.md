@@ -4,7 +4,7 @@
 
 ## 機能
 
-- 手書き入力による漢字認識（2,199文字対応）
+- 手書き入力による漢字認識（6,507文字対応：漢字・ひらがな・カタカナ）
 - 認識結果の読み方表示（音読み・訓読み）
 - 漢字の保存・履歴管理
 - Googleログイン認証（Firebase Authentication）
@@ -17,7 +17,7 @@
 
 - **フロントエンド**: Vanilla JavaScript + Vite
 - **ML推論**: TensorFlow.js（ブラウザ内で動作）
-- **モデル**: [ichisadashioko/kanji-recognition](https://github.com/ichisadashioko/kanji-recognition)（ETL文字データセットで学習済み）
+- **モデル**: [DaKanji](https://github.com/CaptainDario/DaKanji-Single-Kanji-Recognition)（6,507文字対応）
 - **認証**: Firebase Authentication（Google OAuth）
 - **データベース**: Cloud Firestore
 - **読みデータ**: KANJIDIC2（CC BY-SA 4.0）
@@ -43,7 +43,8 @@ kanji/
 ├── index.html          # メインHTML
 ├── package.json
 ├── docs/
-│   └── DESIGN_AUTH_STORAGE.md  # 認証・ストレージ設計ドキュメント
+│   ├── DESIGN_AUTH_STORAGE.md  # 認証・ストレージ設計ドキュメント
+│   └── DESIGN_RECOGNIZER.md    # 認識機能設計ドキュメント
 ├── public/
 │   └── model/          # TensorFlow.jsモデル（ビルド時にDL）
 ├── scripts/
@@ -52,11 +53,17 @@ kanji/
 └── src/
     ├── main.js         # メインロジック、UI制御
     ├── canvas.js       # 描画機能
-    ├── config.js       # 環境設定、Firebase設定
-    ├── recognizer.js   # ML認識機能
-    ├── labels.js       # 文字ラベルデータ
+    ├── config.js       # 環境設定、プロバイダー設定
+    ├── recognizer.js   # 認識サービス
     ├── readings.js     # 読みデータ（KANJIDIC2から生成）
     ├── style.css       # スタイル
+    ├── labels/
+    │   ├── ichisadashioko.js  # ichisadashiokoラベル（2,199文字）
+    │   └── dakanji.js         # DaKanjiラベル（6,507文字）
+    ├── providers/
+    │   └── recognizers/
+    │       ├── ichisadashioko.js  # ichisadashiokoプロバイダー
+    │       └── dakanji.js         # DaKanjiプロバイダー
     └── services/
         ├── auth.js     # 認証サービス
         ├── storage.js  # ストレージサービス
@@ -76,6 +83,7 @@ kanji/
 - [x] Googleログイン認証（Firebase Authentication）
 - [x] クラウドでの履歴同期（Cloud Firestore）
 - [x] ローカル→クラウドの自動マイグレーション
+- [x] 対応文字数拡張（2,199文字 → 6,507文字）
 
 ### 予定
 
@@ -104,5 +112,7 @@ MIT License
 
 ### 使用データ・モデルのライセンス
 
-- **漢字認識モデル**: [ichisadashioko/kanji-recognition](https://github.com/ichisadashioko/kanji-recognition) - MIT License
+- **漢字認識モデル（DaKanji）**: [DaKanji-Single-Kanji-Recognition](https://github.com/CaptainDario/DaKanji-Single-Kanji-Recognition) - MIT License
+  - Character recognition powered by machine learning from CaptainDario (DaAppLab)
+- **漢字認識モデル（ichisadashioko）**: [ichisadashioko/kanji-recognition](https://github.com/ichisadashioko/kanji-recognition) - MIT License
 - **読みデータ**: [KANJIDIC2](https://www.edrdg.org/wiki/index.php/KANJIDIC_Project) - CC BY-SA 4.0
