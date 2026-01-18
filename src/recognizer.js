@@ -1,12 +1,12 @@
 import { RECOGNIZER_PROVIDER } from './config.js';
 import { ichisadashiokoProvider } from './providers/recognizers/ichisadashioko.js';
+import { dakanjiProvider } from './providers/recognizers/dakanji.js';
 
 // Select recognizer provider based on configuration
 function getProvider() {
   switch (RECOGNIZER_PROVIDER) {
     case 'dakanji':
-      // TODO: implement DaKanji provider
-      throw new Error('DaKanji provider not implemented yet');
+      return dakanjiProvider;
     case 'ichisadashioko':
     default:
       return ichisadashiokoProvider;
