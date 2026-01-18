@@ -1,6 +1,7 @@
 // Provider configuration
 export const AUTH_PROVIDER = 'firebase'; // 'firebase' | 'supabase'
 export const STORAGE_PROVIDER = 'firebase'; // 'firebase' | 'supabase' | 'local'
+export const RECOGNIZER_PROVIDER = 'ichisadashioko'; // 'ichisadashioko' | 'dakanji'
 
 // Firebase configuration
 // Get these values from Firebase Console:

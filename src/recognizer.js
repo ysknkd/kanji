@@ -1,117 +1,77 @@
-import * as tf from '@tensorflow/tfjs';
-import { labelDict } from './labels.js';
+import { RECOGNIZER_PROVIDER } from './config.js';
+import { ichisadashiokoProvider } from './providers/recognizers/ichisadashioko.js';
 
-const MODEL_PATH = '/model/model.json';
-const INPUT_SIZE = 64;
+// Select recognizer provider based on configuration
+function getProvider() {
+  switch (RECOGNIZER_PROVIDER) {
+    case 'dakanji':
+      // TODO: implement DaKanji provider
+      throw new Error('DaKanji provider not implemented yet');
+    case 'ichisadashioko':
+    default:
+      return ichisadashiokoProvider;
+  }
+}
 
-let model = null;
+const provider = getProvider();
 
+// Recognizer service - exposes a consistent interface regardless of provider
+export const recognizer = {
+  /**
+   * Load the recognition model
+   * @returns {Promise<void>}
+   */
+  loadModel() {
+    return provider.loadModel();
+  },
+
+  /**
+   * Check if the model is loaded
+   * @returns {boolean}
+   */
+  isLoaded() {
+    return provider.isLoaded();
+  },
+
+  /**
+   * Get model information
+   * @returns {ModelInfo}
+   */
+  getModelInfo() {
+    return provider.getModelInfo();
+  },
+
+  /**
+   * Recognize character from image data
+   * @param {ImageData} imageData - Canvas image data
+   * @param {number} canvasWidth - Canvas width
+   * @param {number} canvasHeight - Canvas height
+   * @param {number} topK - Number of top results to return
+   * @returns {Promise<RecognitionResult[]>}
+   */
+  recognize(imageData, canvasWidth, canvasHeight, topK = 5) {
+    return provider.recognize(imageData, canvasWidth, canvasHeight, topK);
+  },
+
+  /**
+   * Check if a character is supported by the model
+   * @param {string} char - Character to check
+   * @returns {boolean}
+   */
+  supportsCharacter(char) {
+    return provider.supportsCharacter(char);
+  }
+};
+
+// Export legacy functions for backward compatibility
 export async function loadModel() {
-  if (model) return model;
-
-  model = await tf.loadLayersModel(MODEL_PATH);
-  return model;
+  return recognizer.loadModel();
 }
 
 export function isModelLoaded() {
-  return model !== null;
-}
-
-function preprocessImage(imageData, originalWidth, originalHeight) {
-  return tf.tidy(() => {
-    // Convert ImageData to tensor
-    let tensor = tf.browser.fromPixels(imageData, 1);
-
-    // Find the bounding box of the drawing
-    const bounds = findBoundingBox(imageData, originalWidth, originalHeight);
-
-    if (!bounds) {
-      // No drawing found, return empty tensor
-      return tf.zeros([1, INPUT_SIZE, INPUT_SIZE, 1]);
-    }
-
-    // Crop to bounding box with padding
-    const padding = 10;
-    const x = Math.max(0, bounds.minX - padding);
-    const y = Math.max(0, bounds.minY - padding);
-    const width = Math.min(originalWidth - x, bounds.maxX - bounds.minX + padding * 2);
-    const height = Math.min(originalHeight - y, bounds.maxY - bounds.minY + padding * 2);
-
-    // Slice the tensor to get the cropped region
-    tensor = tf.slice(tensor, [y, x, 0], [height, width, 1]);
-
-    // Make it square by padding the shorter dimension
-    const size = Math.max(width, height);
-    const padY = Math.floor((size - height) / 2);
-    const padX = Math.floor((size - width) / 2);
-
-    // Pad with white (255)
-    tensor = tf.pad(tensor, [[padY, size - height - padY], [padX, size - width - padX], [0, 0]], 255);
-
-    // Resize to model input size
-    tensor = tf.image.resizeBilinear(tensor, [INPUT_SIZE, INPUT_SIZE]);
-
-    // Invert (white background -> black, black drawing -> white) and normalize to 0-1
-    tensor = tf.sub(255, tensor);
-    tensor = tf.div(tensor, 255);
-
-    // Add batch dimension
-    tensor = tf.expandDims(tensor, 0);
-
-    return tensor;
-  });
-}
-
-function findBoundingBox(imageData, width, height) {
-  const data = imageData.data;
-  let minX = width, minY = height, maxX = 0, maxY = 0;
-  let hasDrawing = false;
-
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      const i = (y * width + x) * 4;
-      // Check if pixel is not white (drawing exists)
-      if (data[i] < 250 || data[i + 1] < 250 || data[i + 2] < 250) {
-        hasDrawing = true;
-        minX = Math.min(minX, x);
-        minY = Math.min(minY, y);
-        maxX = Math.max(maxX, x);
-        maxY = Math.max(maxY, y);
-      }
-    }
-  }
-
-  if (!hasDrawing) return null;
-
-  return { minX, minY, maxX, maxY };
+  return recognizer.isLoaded();
 }
 
 export async function recognize(imageData, canvasWidth, canvasHeight, topK = 5) {
-  if (!model) {
-    throw new Error('Model not loaded. Call loadModel() first.');
-  }
-
-  const inputTensor = preprocessImage(imageData, canvasWidth, canvasHeight);
-
-  // Run inference
-  const predictions = model.predict(inputTensor);
-  const probabilities = await predictions.data();
-
-  // Clean up tensors
-  inputTensor.dispose();
-  predictions.dispose();
-
-  // Get top K predictions
-  const results = [];
-  for (let i = 0; i < probabilities.length; i++) {
-    results.push({ index: i, probability: probabilities[i] });
-  }
-
-  results.sort((a, b) => b.probability - a.probability);
-
-  return results.slice(0, topK).map(r => ({
-    character: labelDict[r.index],
-    probability: r.probability,
-    percentage: (r.probability * 100).toFixed(1)
-  }));
+  return recognizer.recognize(imageData, canvasWidth, canvasHeight, topK);
 }
