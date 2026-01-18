@@ -243,6 +243,82 @@ button:active {
   padding: 20px;
 }
 
+.save-btn,
+.delete-btn {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+}
+
+.save-btn {
+  background-color: #4a90d9;
+  color: white;
+}
+
+.save-btn:hover:not(:disabled) {
+  background-color: #3a7bc8;
+}
+
+.save-btn:disabled {
+  background-color: #a0c4e8;
+  cursor: default;
+}
+
+.delete-btn {
+  background-color: #e57373;
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #d32f2f;
+}
+
+#history-container {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#history-container h2 {
+  font-size: 1rem;
+  margin: 0 0 12px 0;
+  color: #333;
+}
+
+#history {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+}
+
+.history-character {
+  font-size: 1.5rem;
+  font-weight: 500;
+  min-width: 40px;
+  text-align: center;
+}
+
+.history-reading {
+  flex: 1;
+  font-size: 0.85rem;
+  color: #555;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     color: #f0f0f0;
@@ -309,5 +385,26 @@ button:active {
 
   .no-results {
     color: #777;
+  }
+
+  .save-btn:disabled {
+    background-color: #3a5f7f;
+  }
+
+  #history-container {
+    background-color: #2a2a2a;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  #history-container h2 {
+    color: #e0e0e0;
+  }
+
+  .history-item {
+    background-color: #333;
+  }
+
+  .history-reading {
+    color: #aaa;
   }
 }
