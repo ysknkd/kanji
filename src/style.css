@@ -38,8 +38,91 @@ header {
 
 h1 {
   font-size: 1.5rem;
-  margin: 0;
+  margin: 0 0 8px 0;
   color: #1a1a1a;
+}
+
+#auth-container {
+  min-height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+
+.user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
+
+.user-name {
+  color: #555;
+}
+
+.auth-btn {
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.auth-btn.login-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #fff;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.auth-btn.login-btn:hover {
+  background-color: #f5f5f5;
+}
+
+.auth-btn:not(.login-btn) {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.auth-btn:not(.login-btn):hover {
+  background-color: #d0d0d0;
+}
+
+.google-icon {
+  flex-shrink: 0;
+}
+
+#login-prompt {
+  background-color: #e3f2fd;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 0.85rem;
+}
+
+#login-prompt p {
+  margin: 0 0 8px 0;
+  font-weight: 500;
+  color: #1565c0;
+}
+
+#login-prompt ul {
+  margin: 0;
+  padding-left: 20px;
+  color: #1976d2;
+}
+
+#login-prompt li {
+  margin: 4px 0;
 }
 
 main {
@@ -406,5 +489,40 @@ button:active {
 
   .history-reading {
     color: #aaa;
+  }
+
+  .user-name {
+    color: #ccc;
+  }
+
+  .auth-btn.login-btn {
+    background-color: #333;
+    color: #e0e0e0;
+    border-color: #555;
+  }
+
+  .auth-btn.login-btn:hover {
+    background-color: #404040;
+  }
+
+  .auth-btn:not(.login-btn) {
+    background-color: #404040;
+    color: #e0e0e0;
+  }
+
+  .auth-btn:not(.login-btn):hover {
+    background-color: #505050;
+  }
+
+  #login-prompt {
+    background-color: #1a3a5c;
+  }
+
+  #login-prompt p {
+    color: #64b5f6;
+  }
+
+  #login-prompt ul {
+    color: #90caf9;
   }
 }
