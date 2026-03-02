@@ -56,5 +56,43 @@ export const storage = {
    */
   clearHistory(userId) {
     return provider.clearHistory(userId);
+  },
+
+  /**
+   * Get user's compound words
+   * @param {string|null} userId - User ID (null for anonymous)
+   * @returns {Promise<CompoundItem[]>}
+   */
+  getCompounds(userId) {
+    return provider.getCompounds(userId);
+  },
+
+  /**
+   * Add a compound word
+   * @param {string|null} userId - User ID (null for anonymous)
+   * @param {CompoundItem} item - The compound item to add
+   * @returns {Promise<CompoundItem[]>} Updated compounds
+   */
+  addCompound(userId, item) {
+    return provider.addCompound(userId, item);
+  },
+
+  /**
+   * Remove a compound word
+   * @param {string|null} userId - User ID (null for anonymous)
+   * @param {string} id - The compound ID to remove
+   * @returns {Promise<CompoundItem[]>} Updated compounds
+   */
+  removeCompound(userId, id) {
+    return provider.removeCompound(userId, id);
+  },
+
+  /**
+   * Clear all compounds
+   * @param {string|null} userId - User ID (null for anonymous)
+   * @returns {Promise<CompoundItem[]>} Empty array
+   */
+  clearCompounds(userId) {
+    return provider.clearCompounds(userId);
   }
 };

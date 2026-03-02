@@ -35,6 +35,34 @@
           <div id="results"></div>
         </div>
 
+        <div id="compound-form-container">
+          <h2>熟語を登録</h2>
+          <form id="compound-form">
+            <div class="form-row">
+              <label for="compound-input">熟語</label>
+              <div class="input-with-button">
+                <input type="text" id="compound-input" placeholder="例: 今日" required />
+                <button type="button" id="lookup-btn">検索</button>
+              </div>
+            </div>
+            <div id="lookup-status"></div>
+            <div class="form-row">
+              <label for="reading-input">読み</label>
+              <input type="text" id="reading-input" placeholder="自動入力されます" required />
+            </div>
+            <div class="form-row">
+              <label for="meaning-input">意味</label>
+              <input type="text" id="meaning-input" placeholder="自動入力されます" />
+            </div>
+            <button type="submit" id="save-compound-btn">登録</button>
+          </form>
+        </div>
+
+        <div id="compounds-container">
+          <h2>保存した熟語</h2>
+          <div id="compounds"></div>
+        </div>
+
         <div id="login-prompt">
           <p>ログインするとさらに便利に:</p>
           <ul>
