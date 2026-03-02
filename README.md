@@ -7,6 +7,7 @@
 - 手書き入力による漢字認識（6,507文字対応：漢字・ひらがな・カタカナ）
 - 認識結果の読み方表示（音読み・訓読み）
 - 漢字の保存・履歴管理
+- 熟語登録機能（読み・意味をJisho.org APIで自動取得）
 - Googleログイン認証（Firebase Authentication）
 - クラウド同期（Cloud Firestore）
 - ローカルストレージからクラウドへの自動マイグレーション
@@ -45,6 +46,9 @@ kanji/
 ├── docs/
 │   ├── DESIGN_AUTH_STORAGE.md  # 認証・ストレージ設計ドキュメント
 │   └── DESIGN_RECOGNIZER.md    # 認識機能設計ドキュメント
+├── functions/
+│   └── api/
+│       └── jisho.js    # Jisho.org APIプロキシ（Cloudflare Pages Function）
 ├── public/
 │   └── model/          # TensorFlow.jsモデル（ビルド時にDL）
 ├── scripts/
@@ -84,6 +88,7 @@ kanji/
 - [x] クラウドでの履歴同期（Cloud Firestore）
 - [x] ローカル→クラウドの自動マイグレーション
 - [x] 対応文字数拡張（2,199文字 → 6,507文字）
+- [x] 熟語登録機能（Jisho.org API連携）
 
 ### 予定
 
