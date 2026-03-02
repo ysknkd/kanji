@@ -15,6 +15,13 @@ const canvasEl = document.getElementById('drawing-canvas');
 const hintEl = document.getElementById('canvas-hint');
 const authContainerEl = document.getElementById('auth-container');
 const loginPromptEl = document.getElementById('login-prompt');
+const compoundFormEl = document.getElementById('compound-form');
+const compoundInputEl = document.getElementById('compound-input');
+const readingInputEl = document.getElementById('reading-input');
+const meaningInputEl = document.getElementById('meaning-input');
+const compoundsEl = document.getElementById('compounds');
+const lookupBtnEl = document.getElementById('lookup-btn');
+const lookupStatusEl = document.getElementById('lookup-status');
 
 let drawingCanvas;
 let currentUser = null;
@@ -52,6 +59,141 @@ async function handleSave(character) {
 async function handleDelete(character) {
   await storage.removeFromHistory(currentUser?.id || null, character);
   await renderHistory();
+}
+
+function generateId() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+function setLookupStatus(message, type = '') {
+  lookupStatusEl.textContent = message;
+  lookupStatusEl.className = type;
+}
+
+async function handleLookup() {
+  const keyword = compoundInputEl.value.trim();
+
+  if (!keyword) {
+    setLookupStatus('熟語を入力してください', 'error');
+    return;
+  }
+
+  lookupBtnEl.disabled = true;
+  lookupBtnEl.textContent = '検索中...';
+  setLookupStatus('辞書を検索中...');
+
+  try {
+    const response = await fetch(`/api/jisho?keyword=${encodeURIComponent(keyword)}`);
+
+    if (!response.ok) {
+      throw new Error('辞書APIエラー');
+    }
+
+    const data = await response.json();
+
+    if (data.data && data.data.length > 0) {
+      const entry = data.data[0];
+
+      // Get reading (prefer the one matching the input)
+      let reading = '';
+      if (entry.japanese && entry.japanese.length > 0) {
+        const match = entry.japanese.find(j => j.word === keyword);
+        if (match && match.reading) {
+          reading = match.reading;
+        } else if (entry.japanese[0].reading) {
+          reading = entry.japanese[0].reading;
+        }
+      }
+
+      // Get meanings (English definitions)
+      let meanings = [];
+      if (entry.senses && entry.senses.length > 0) {
+        for (const sense of entry.senses) {
+          if (sense.english_definitions) {
+            meanings.push(...sense.english_definitions);
+          }
+          if (meanings.length >= 3) break;
+        }
+      }
+
+      readingInputEl.value = reading;
+      meaningInputEl.value = meanings.slice(0, 3).join(', ');
+      setLookupStatus('検索完了', 'success');
+    } else {
+      setLookupStatus('見つかりませんでした', 'error');
+    }
+  } catch (error) {
+    console.error('Lookup error:', error);
+    setLookupStatus('検索に失敗しました', 'error');
+  } finally {
+    lookupBtnEl.disabled = false;
+    lookupBtnEl.textContent = '検索';
+  }
+}
+
+async function handleSaveCompound(e) {
+  e.preventDefault();
+
+  const compound = compoundInputEl.value.trim();
+  const reading = readingInputEl.value.trim();
+  const meaning = meaningInputEl.value.trim();
+
+  if (!compound || !reading) {
+    return;
+  }
+
+  const item = {
+    id: generateId(),
+    compound,
+    reading,
+    meaning,
+    savedAt: Date.now()
+  };
+
+  await storage.addCompound(currentUser?.id || null, item);
+  await renderCompounds();
+
+  // Clear form
+  compoundInputEl.value = '';
+  readingInputEl.value = '';
+  meaningInputEl.value = '';
+}
+
+async function handleDeleteCompound(id) {
+  await storage.removeCompound(currentUser?.id || null, id);
+  await renderCompounds();
+}
+
+async function renderCompounds() {
+  const compounds = await storage.getCompounds(currentUser?.id || null);
+
+  if (compounds.length === 0) {
+    compoundsEl.innerHTML = '<div class="no-results">保存した熟語はありません</div>';
+    return;
+  }
+
+  compoundsEl.innerHTML = compounds.map(item => `
+    <div class="compound-item">
+      <span class="compound-text">${item.compound}</span>
+      <div class="compound-info">
+        <span class="compound-reading">${item.reading}</span>
+        ${item.meaning ? `<span class="compound-meaning">${item.meaning}</span>` : ''}
+      </div>
+      <button class="delete-btn" data-compound-id="${item.id}">削除</button>
+    </div>
+  `).join('');
+
+  // Add event listeners to delete buttons
+  compoundsEl.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      btn.disabled = true;
+      await handleDeleteCompound(btn.dataset.compoundId);
+    });
+  });
 }
 
 function renderResults(results) {
@@ -162,8 +304,9 @@ async function handleLogin() {
 
   try {
     await auth.signIn();
-    // Re-render history after migration completes
+    // Re-render history and compounds after migration completes
     await renderHistory();
+    await renderCompounds();
   } catch (error) {
     console.error('Login failed:', error);
     setStatus('ログインに失敗しました', 'error');
@@ -227,17 +370,21 @@ async function init() {
 
   recognizeBtn.addEventListener('click', handleRecognize);
   clearBtn.addEventListener('click', handleClear);
+  compoundFormEl.addEventListener('submit', handleSaveCompound);
+  lookupBtnEl.addEventListener('click', handleLookup);
 
   // Set up auth state listener
   auth.onAuthStateChanged(async (user) => {
     currentUser = user;
     renderAuthUI();
     await renderHistory();
+    await renderCompounds();
   });
 
   renderResults(null);
   renderAuthUI();
   await renderHistory();
+  await renderCompounds();
 
   try {
     await loadModel();

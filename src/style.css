@@ -402,6 +402,169 @@ button:active {
   color: #555;
 }
 
+/* Compound form styles */
+#compound-form-container {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#compound-form-container h2 {
+  font-size: 1rem;
+  margin: 0 0 12px 0;
+  color: #333;
+}
+
+#compound-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-row label {
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.form-row input {
+  padding: 10px 12px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-row input:focus {
+  border-color: #4a90d9;
+}
+
+.input-with-button {
+  display: flex;
+  gap: 8px;
+}
+
+.input-with-button input {
+  flex: 1;
+}
+
+#lookup-btn {
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+#lookup-btn:hover:not(:disabled) {
+  background-color: #5a6268;
+}
+
+#lookup-btn:disabled {
+  background-color: #adb5bd;
+  cursor: not-allowed;
+}
+
+#lookup-status {
+  font-size: 0.85rem;
+  color: #666;
+  min-height: 1.2em;
+}
+
+#lookup-status.error {
+  color: #d32f2f;
+}
+
+#lookup-status.success {
+  color: #388e3c;
+}
+
+#save-compound-btn {
+  background-color: #4a90d9;
+  color: white;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+#save-compound-btn:hover:not(:disabled) {
+  background-color: #3a7bc8;
+}
+
+#save-compound-btn:disabled {
+  background-color: #a0c4e8;
+  cursor: not-allowed;
+}
+
+/* Compounds list styles */
+#compounds-container {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#compounds-container h2 {
+  font-size: 1rem;
+  margin: 0 0 12px 0;
+  color: #333;
+}
+
+#compounds {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.compound-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+}
+
+.compound-text {
+  font-size: 1.2rem;
+  font-weight: 500;
+  min-width: 60px;
+}
+
+.compound-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.compound-reading {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.compound-meaning {
+  font-size: 0.8rem;
+  color: #888;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     color: #f0f0f0;
@@ -524,5 +687,83 @@ button:active {
 
   #login-prompt ul {
     color: #90caf9;
+  }
+
+  /* Compound form dark mode */
+  #compound-form-container {
+    background-color: #2a2a2a;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  #compound-form-container h2 {
+    color: #e0e0e0;
+  }
+
+  .form-row label {
+    color: #aaa;
+  }
+
+  .form-row input {
+    background-color: #333;
+    border-color: #555;
+    color: #e0e0e0;
+  }
+
+  .form-row input:focus {
+    border-color: #5a9fe9;
+  }
+
+  .form-row input::placeholder {
+    color: #777;
+  }
+
+  #save-compound-btn {
+    background-color: #5a9fe9;
+  }
+
+  #save-compound-btn:hover:not(:disabled) {
+    background-color: #4a8fd9;
+  }
+
+  #save-compound-btn:disabled {
+    background-color: #3a5f7f;
+  }
+
+  #lookup-btn {
+    background-color: #5a6268;
+  }
+
+  #lookup-btn:hover:not(:disabled) {
+    background-color: #6c757d;
+  }
+
+  #lookup-btn:disabled {
+    background-color: #404040;
+  }
+
+  #lookup-status {
+    color: #aaa;
+  }
+
+  /* Compounds list dark mode */
+  #compounds-container {
+    background-color: #2a2a2a;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  #compounds-container h2 {
+    color: #e0e0e0;
+  }
+
+  .compound-item {
+    background-color: #333;
+  }
+
+  .compound-reading {
+    color: #aaa;
+  }
+
+  .compound-meaning {
+    color: #888;
   }
 }
