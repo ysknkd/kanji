@@ -13,15 +13,34 @@ export async function onRequestGet(context) {
   }
 
   try {
+    // Use jisho.org API
     const jishoUrl = `https://jisho.org/api/v1/search/words?keyword=${encodeURIComponent(keyword)}`;
+
     const response = await fetch(jishoUrl, {
+      method: 'GET',
       headers: {
-        'User-Agent': 'Kanji App (educational)'
+        'User-Agent': 'Mozilla/5.0 (compatible; KanjiApp/1.0)',
+        'Accept': 'application/json',
+      },
+      cf: {
+        // Cloudflare-specific options to help with SSL issues
+        cacheTtl: 86400,
+        cacheEverything: true,
       }
     });
 
     if (!response.ok) {
-      throw new Error(`Jisho API returned ${response.status}`);
+      // If jisho.org fails, return empty result instead of error
+      // This allows the user to manually enter the data
+      return new Response(JSON.stringify({
+        meta: { status: 200 },
+        data: []
+      }), {
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'public, max-age=300'
+        }
+      });
     }
 
     const data = await response.json();
@@ -29,12 +48,17 @@ export async function onRequestGet(context) {
     return new Response(JSON.stringify(data), {
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=86400' // Cache for 1 day
+        'Cache-Control': 'public, max-age=86400'
       }
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
+    // On error, return empty result so UI can handle gracefully
+    return new Response(JSON.stringify({
+      meta: { status: 200 },
+      data: [],
+      _error: error.message
+    }), {
+      status: 200,
       headers: { 'Content-Type': 'application/json' }
     });
   }

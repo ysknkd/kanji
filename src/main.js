@@ -95,7 +95,10 @@ async function handleLookup() {
 
     const data = await response.json();
 
-    if (data.data && data.data.length > 0) {
+    if (data._error) {
+      // API connection error - let user enter manually
+      setLookupStatus('辞書に接続できません。手入力してください', 'error');
+    } else if (data.data && data.data.length > 0) {
       const entry = data.data[0];
 
       // Get reading (prefer the one matching the input)
@@ -124,7 +127,7 @@ async function handleLookup() {
       meaningInputEl.value = meanings.slice(0, 3).join(', ');
       setLookupStatus('検索完了', 'success');
     } else {
-      setLookupStatus('見つかりませんでした', 'error');
+      setLookupStatus('見つかりませんでした。手入力してください', 'error');
     }
   } catch (error) {
     console.error('Lookup error:', error);
